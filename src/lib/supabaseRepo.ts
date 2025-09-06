@@ -162,6 +162,24 @@ export function getSupabaseClient(): SupabaseClient {
     return getClient();
 }
 
+// Storage helpers: avatars
+export function getAvatarPublicUrl(key?: string | null): string | null {
+    if (!key) return null;
+    try {
+        const supabase = getClient();
+        const { data } = supabase.storage.from("avatars").getPublicUrl(key);
+        return data?.publicUrl || null;
+    } catch (e) {
+        console.warn("Failed to build avatar public URL", e);
+        return null;
+    }
+}
+
+export function getGuestAvatarUrl(g?: Guest | null): string | null {
+    if (!g?.avatar_key) return null;
+    return getAvatarPublicUrl(g.avatar_key);
+}
+
 // Example usage (uncomment to test inside a React component):
 // import { useEffect } from "react";
 // useEffect(() => {

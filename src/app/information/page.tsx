@@ -5,8 +5,18 @@ import {useState} from "react";
 export default function InformationPage() {
     const [lightbox, setLightbox] = useState<{ src: string; alt: string } | null>(null);
 
-    const open = (src: string, alt: string) => setLightbox({src, alt});
+    function open(src: string, alt: string) {
+        setLightbox({src, alt});
+        playSound();
+    }
+
     const close = () => setLightbox(null);
+
+
+    function playSound() {
+        const audio = new Audio('/500_cigs.m4a');
+        audio.play();
+    }
 
     return (
         <div className="min-h-screen p-6">
@@ -18,15 +28,19 @@ export default function InformationPage() {
                 </header>
 
                 <section className="grid md:grid-cols-3 gap-4">
-                    <figure className="rounded-xl overflow-hidden border bg-white/60 cursor-zoom-in" onClick={() => open('/CrayfishOnTable.webp', 'Kräftor på bordet')}>
+                    <figure className="rounded-xl overflow-hidden border bg-white/60 cursor-zoom-in"
+                            onClick={() => open('/CrayfishOnTable.webp', 'Kräftor på bordet')}>
                         <img src="/CrayfishOnTable.webp" alt="Kräftor på bordet" className="w-full h-48 object-cover"/>
-                        <figcaption className="p-3 text-sm opacity-80">Stämningsbild (klicka för att förstora)</figcaption>
+                        <figcaption className="p-3 text-sm opacity-80">Stämningsbild (klicka för att förstora)
+                        </figcaption>
                     </figure>
-                    <figure className="rounded-xl overflow-hidden border bg-white/60 cursor-zoom-in" onClick={() => open('/PeopleCheering.webp', 'Glada människor')}>
+                    <figure className="rounded-xl overflow-hidden border bg-white/60 cursor-zoom-in"
+                            onClick={() => open('/PeopleCheering.webp', 'Glada människor')}>
                         <img src="/PeopleCheering.webp" alt="Glada människor" className="w-full h-48 object-cover"/>
                         <figcaption className="p-3 text-sm opacity-80">Glädje och fest (klicka)</figcaption>
                     </figure>
-                    <figure className="rounded-xl overflow-hidden border bg-white/60 cursor-zoom-in" onClick={() => open('/InsctructionsOnPeeling.png', 'Instruktioner för skalning')}>
+                    <figure className="rounded-xl overflow-hidden border bg-white/60 cursor-zoom-in"
+                            onClick={() => open('/InsctructionsOnPeeling.png', 'Instruktioner för skalning')}>
                         <img src="/InsctructionsOnPeeling.png" alt="Instruktioner för skalning"
                              className="w-full h-48 object-contain bg-white"/>
                         <figcaption className="p-3 text-sm opacity-80">Instruktioner på skalning (klicka)</figcaption>
