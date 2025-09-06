@@ -139,7 +139,7 @@ export default function ChatPage() {
                 <h1 className="text-2xl font-bold">Gruppchatt</h1>
                 {error && <p className="text-sm text-red-600">{error}</p>}
 
-                <div className="rounded-xl border p-4 h-[50vh] overflow-y-auto bg-black/5">
+                <div className="rounded-xl border border-white/20 p-4 h-[50vh] overflow-y-auto bg-white/10">
                     {loading && <p className="text-sm opacity-70">Laddar…</p>}
                     {!loading && messages.length === 0 && (
                         <p className="text-sm opacity-70">Inga meddelanden än. Skriv något!</p>
@@ -180,7 +180,7 @@ export default function ChatPage() {
                                             )}
                                         </div>
                                         <div
-                                            className={`px-3 py-2 rounded-2xl whitespace-pre-wrap ${mine ? "bg-blue-200" : "bg-gray-200"}`}>
+                                            className={`px-3 py-2 rounded-2xl whitespace-pre-wrap ${mine ? "bg-red-800 text-white" : "bg-gray-700 text-white"}`}>
                                             {m.message_body}
                                         </div>
                                     </div>
@@ -197,14 +197,14 @@ export default function ChatPage() {
                         value={text}
                         onChange={(e) => setText(e.target.value)}
                         placeholder={userId ? `Meddelande som ${currentName}…` : "Välj användare först…"}
-                        className="flex-1 rounded-lg border px-3 py-2 bg-white/70"
+                        className="flex-1 rounded-lg border border-yellow-400 px-3 py-2 bg-white/10 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-yellow-400/60"
                         onKeyDown={(e) => {
                             if (e.key === "Enter") send();
                         }}
                         disabled={!userId || busy}
                     />
                     <button onClick={send} disabled={!userId || busy}
-                            className="rounded-full border px-4 py-2 text-sm disabled:opacity-50">Skicka
+                            className="rounded-full border border-red-500 bg-red-500 text-white hover:bg-red-600 hover:border-red-600 px-4 py-2 text-sm disabled:opacity-50 disabled:hover:bg-red-500 disabled:hover:border-red-500">Skicka
                     </button>
                 </div>
             </main>

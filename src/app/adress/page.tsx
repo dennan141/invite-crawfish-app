@@ -52,7 +52,7 @@ export default function AdressPage() {
 
                     {/* Right: Short explanation with a simple paragraph */}
                     <div className="w-full">
-                        <div className="rounded-lg border p-4 shadow-sm bg-white/60">
+                        <div className="rounded-lg border border-white/20 p-4 shadow-sm bg-white/10">
                             <h2 className="text-lg font-semibold mb-2">Hitta hit</h2>
                             <p className="leading-relaxed">
                                 Huset ligger på Bigarråvägen 10 i Falkenberg.<br/>

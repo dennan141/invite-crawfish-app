@@ -33,7 +33,7 @@ export default function RootLayout({
         >
         {/* Gate the entire app behind a cookie-based user selector */}
         {/* Add a subtle light overlay to ensure readability over the background image */}
-        <div className="min-h-screen bg-white/85 backdrop-blur-[1px]">
+        <div className="min-h-screen bg-[#1b2736]/40 backdrop-blur-[1px]">
             <UserGate>
                 {children}
             </UserGate>

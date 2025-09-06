@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-    --background: #ffffff;
-    --foreground: #171717;
+    --background: #0d1117; /* dark base */
+    --foreground: #e6edf3; /* light text */
 }
 
 @theme inline {
@@ -12,21 +12,15 @@
     --font-mono: var(--font-geist-mono);
 }
 
-/* Force a light theme with white/red/yellow palette */
-/* Keep the same colors regardless of prefers-color-scheme */
-@media (prefers-color-scheme: dark) {
-    :root {
-        --background: #ffffff;
-        --foreground: #171717;
-    }
-}
+/* Permanent dark theme (ignore system preference) */
+/* Removed light-forcing override */
 
 body {
-    /* Cheerful background image with a subtle dark-to-transparent gradient for readability */
-    background-image: linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url("/PeopleCheering.webp");
+    /* Darker image overlay around #1b2736 for a softer, eye-friendly contrast */
+    background-image: linear-gradient(rgba(27, 39, 54, 0.85), rgba(27, 39, 54, 0.85)), url("/PeopleCheering.webp");
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-    color: var(--foreground);
+    color: #e6edf3;
     font-family: Arial, Helvetica, sans-serif;
 }
