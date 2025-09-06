@@ -2,6 +2,7 @@
 import Nav from "@/components/Nav";
 import Confetti from "@/components/Confetti";
 import Link from "next/link";
+import MonthCalendar from "@/components/MonthCalendar";
 
 export default function Home() {
     return (
@@ -19,28 +20,7 @@ export default function Home() {
                     </audio>
                     <p className="text-xs opacity-60">Tips: Spela mig för en fanfar!</p>
                 </section>
-
-                <div className="grid sm:grid-cols-2 gap-3">
-                    <Link href="/select-user" className="rounded-xl border p-4 hover:bg-black/5 dark:hover:bg-white/10">
-                        <h3 className="font-semibold">Select User →</h3>
-                        <p className="text-sm opacity-80">Choose your name from the list and save it in your
-                            browser.</p>
-                    </Link>
-                    <Link href="/availability"
-                          className="rounded-xl border p-4 hover:bg-black/5 dark:hover:bg-white/10">
-                        <h3 className="font-semibold">Availability →</h3>
-                        <p className="text-sm opacity-80">Mark which dates work for you from the two weekends.</p>
-                    </Link>
-                    <Link href="/chat" className="rounded-xl border p-4 hover:bg-black/5 dark:hover:bg-white/10">
-                        <h3 className="font-semibold">Group Chat →</h3>
-                        <p className="text-sm opacity-80">Ask questions or leave notes for the group. (Local only for
-                            now)</p>
-                    </Link>
-                    <Link href="/repo" className="rounded-xl border p-4 hover:bg-black/5 dark:hover:bg-white/10">
-                        <h3 className="font-semibold">Repo / Supabase →</h3>
-                        <p className="text-sm opacity-80">Placeholder page to wire up Supabase functions later.</p>
-                    </Link>
-                </div>
+                <MonthCalendar/>
             </main>
         </div>
     );

@@ -29,7 +29,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {/* Gate the entire app behind a cookie-based user selector */}
-        {/* @ts-expect-error Server Component can render Client Component */}
+
         <UserGate>
           {children}
         </UserGate>
