@@ -15,7 +15,7 @@ export default function Nav() {
     const router = useRouter();
 
     function goHome() {
-        const audio = new Audio('/smartThinker.m4a');
+        const audio = new Audio('/SmartThinker.m4a');
         audio.play();
         router.push("/");
     }
