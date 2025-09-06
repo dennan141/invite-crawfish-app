@@ -191,15 +191,15 @@ export default function MonthCalendar({initialDate, dayCellHeight, onMonthChange
     // TODO: Expand with database-aware color rules (e.g., RSVP summaries per date)
     function decideHighlightClass(optsForDay: DateOption[], inMonth: boolean, isSelected: boolean): string {
         // Selected day override
-        if (isSelected) return "bg-blue-500 text-white";
+        if (isSelected) return "bg-yellow-500 text-black";
         const hasOption = optsForDay.length > 0;
-        if (!hasOption) return inMonth ? "bg-white/70 hover:bg-white" : "bg-gray-50 opacity-70";
-        // RSVP-driven colors: any YES -> green, else if any NO -> red, else default blue
+        if (!hasOption) return inMonth ? "bg-white/5 hover:bg-white/10" : "bg-white/5 opacity-50";
+        // RSVP-driven colors: any YES -> green, else if any NO -> red, else default yellow
         const anyYes = optsForDay.some(o => myRsvps[String(o.id || "")]?.status === RsvpOptions.YES);
         const anyNo = optsForDay.some(o => myRsvps[String(o.id || "")]?.status === RsvpOptions.NO);
         if (anyYes) return "bg-green-200 hover:bg-green-300";
         if (anyNo) return "bg-red-200 hover:bg-red-300";
-        return "bg-blue-100 hover:bg-blue-200";
+        return "bg-yellow-100 hover:bg-yellow-200";
     }
 
     // Wrapper used by the grid; delegates to decideHighlightClass
@@ -249,7 +249,7 @@ export default function MonthCalendar({initialDate, dayCellHeight, onMonthChange
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     <button
-                        className="border rounded px-2 py-1"
+                        className="border rounded px-2 py-1 bg-yellow-400 hover:bg-yellow-500 text-black"
                         onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1))}
                     >
                         {"<"}
@@ -258,7 +258,7 @@ export default function MonthCalendar({initialDate, dayCellHeight, onMonthChange
                         {cursor.toLocaleString(undefined, {month: "long", year: "numeric"})}
                     </div>
                     <button
-                        className="border rounded px-2 py-1"
+                        className="border rounded px-2 py-1 bg-yellow-400 hover:bg-yellow-500 text-black"
                         onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1))}
                     >
                         {">"}
@@ -322,7 +322,7 @@ export default function MonthCalendar({initialDate, dayCellHeight, onMonthChange
                                     <span>{new Date(date).getDate()}</span>
                                 </div>
                                 {items.length > 0 && (
-                                    <div className="mt-1 flex flex-wrap gap-1">
+                                    <div className="mt-1 hidden sm:flex flex-wrap gap-1">
                                         {items.map(({guest, gid, status}) => {
                                             const url = getGuestAvatarUrl(guest);
                                             const borderClass = status === RsvpOptions.YES ? "border-green-600" : "border-red-600";

@@ -92,9 +92,9 @@ export default function SelectedDateAndInfo({ option, guests, rsvps, onClose, on
     <>
       <div className="fixed inset-0 bg-black/60 z-50" onClick={onClose} aria-hidden="true" />
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <section className="w-full max-w-3xl bg-white text-black rounded-2xl shadow-2xl border p-6 sm:p-10 relative">
+        <section className="w-full max-w-3xl bg-[#0f1724]/90 text-white rounded-2xl shadow-2xl border border-yellow-300 p-6 sm:p-10 relative">
           <button
-            className="absolute top-3 right-3 rounded-full border px-3 py-1 text-sm"
+            className="absolute top-3 right-3 rounded-full border border-red-400 text-red-300 hover:bg-white/5 px-3 py-1 text-sm"
             onClick={onClose}
             aria-label="Stäng"
           >
@@ -166,8 +166,8 @@ export default function SelectedDateAndInfo({ option, guests, rsvps, onClose, on
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-              <button className="w-full py-3 rounded-xl bg-green-600 text-white font-bold" onClick={onYes}>Jag kan</button>
-              <button className="w-full py-3 rounded-xl bg-red-600 text-white font-bold" onClick={onNo}>Jag kan inte</button>
+              <button className="w-full py-3 rounded-xl bg-yellow-500 hover:bg-yellow-600 text-black font-bold shadow" onClick={onYes}>Jag kan</button>
+              <button className="w-full py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold shadow" onClick={onNo}>Jag kan inte</button>
             </div>
           </div>
         </section>

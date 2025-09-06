@@ -28,18 +28,18 @@ export default function InformationPage() {
                 </header>
 
                 <section className="grid md:grid-cols-3 gap-4">
-                    <figure className="rounded-xl overflow-hidden border bg-white/60 cursor-zoom-in"
+                    <figure className="rounded-xl overflow-hidden border border-white/20 bg-white/10 cursor-zoom-in"
                             onClick={() => open('/CrayfishOnTable.webp', 'Kräftor på bordet')}>
                         <img src="/CrayfishOnTable.webp" alt="Kräftor på bordet" className="w-full h-48 object-cover"/>
                         <figcaption className="p-3 text-sm opacity-80">Stämningsbild (klicka för att förstora)
                         </figcaption>
                     </figure>
-                    <figure className="rounded-xl overflow-hidden border bg-white/60 cursor-zoom-in"
+                    <figure className="rounded-xl overflow-hidden border border-white/20 bg-white/10 cursor-zoom-in"
                             onClick={() => open('/PeopleCheering.webp', 'Glada människor')}>
                         <img src="/PeopleCheering.webp" alt="Glada människor" className="w-full h-48 object-cover"/>
                         <figcaption className="p-3 text-sm opacity-80">Glädje och fest (klicka)</figcaption>
                     </figure>
-                    <figure className="rounded-xl overflow-hidden border bg-white/60 cursor-zoom-in"
+                    <figure className="rounded-xl overflow-hidden border border-white/20 bg-white/10 cursor-zoom-in"
                             onClick={() => open('/InsctructionsOnPeeling.png', 'Instruktioner för skalning')}>
                         <img src="/InsctructionsOnPeeling.png" alt="Instruktioner för skalning"
                              className="w-full h-48 object-contain bg-white"/>
@@ -47,7 +47,7 @@ export default function InformationPage() {
                     </figure>
                 </section>
 
-                <section className="rounded-xl border p-4 bg-white/60 space-y-2">
+                <section className="rounded-xl border border-white/20 p-4 bg-white/10 space-y-2">
                     <h2 className="font-semibold">Detaljer</h2>
                     <ul className="list-disc pl-6 text-sm">
                         <li>Ta med gott humör och sådär lixom bruh</li>
