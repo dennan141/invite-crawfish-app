@@ -1,4 +1,4 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+I made a party-application for me and my friends where we can decide on dates: get info, chatt and use a simple backend to store information, published via Vercel.
 
 ## Getting Started
 
