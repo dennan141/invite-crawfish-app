@@ -2,7 +2,7 @@
 import {useEffect, useState} from "react";
 import {USER_COOKIE} from "@/constants/users";
 import {getCookie, setCookie} from "@/lib/cookies";
-import {getGuests, Guest} from "@/lib/supabaseRepo";
+import {getGuests, Guest, getGuestAvatarUrl} from "@/lib/supabaseRepo";
 
 export default function UserGate({children}: { children: React.ReactNode }) {
     const [selectedId, setSelectedId] = useState<string>("");
@@ -84,19 +84,29 @@ export default function UserGate({children}: { children: React.ReactNode }) {
                     <div className="flex flex-col gap-2 max-h-64 overflow-y-auto">
                         {loading && <div className="text-sm opacity-70">Loading guests...</div>}
                         {error && <div className="text-sm text-red-600">{error}</div>}
-                        {!loading && !error && guests.map((g) => (
-                            <button
-                                key={String(g.id)}
-                                onClick={() => userHasSelected(String(g.id))}
-                                className={`text-left rounded-lg border p-3 transition-colors ${
-                                    selectedId === String(g.id)
-                                        ? "bg-black text-white dark:bg-white dark:text-black border-transparent"
-                                        : "hover:bg-black/5 dark:hover:bg-white/10"
-                                }`}
-                            >
-                                {g.display_name || "Unnamed"}
-                            </button>
-                        ))}
+                        {!loading && !error && guests.map((g) => {
+                            const url = getGuestAvatarUrl(g);
+                            return (
+                                <button
+                                    key={String(g.id)}
+                                    onClick={() => userHasSelected(String(g.id))}
+                                    className={`text-left rounded-lg border p-3 transition-colors flex items-center gap-3 ${
+                                        selectedId === String(g.id)
+                                            ? "bg-black text-white dark:bg-white dark:text-black border-transparent"
+                                            : "hover:bg-black/5 dark:hover:bg-white/10"
+                                    }`}
+                                >
+                                    {url ? (
+                                        <img src={url} alt="avatar" className="w-7 h-7 rounded-full object-cover"/>
+                                    ) : (
+                                        <div className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-xs">
+                                            {(g.display_name || "?").charAt(0)}
+                                        </div>
+                                    )}
+                                    <span>{g.display_name || "Unnamed"}</span>
+                                </button>
+                            );
+                        })}
                     </div>
                     <div className="flex items-center gap-2">
                         <button

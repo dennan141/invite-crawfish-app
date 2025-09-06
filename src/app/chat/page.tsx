@@ -9,7 +9,8 @@ import {
     getMessages,
     Guest,
     Message,
-    deleteMessage as deleteMessageApi
+    deleteMessage as deleteMessageApi,
+    getGuestAvatarUrl
 } from "@/lib/supabaseRepo";
 
 export default function ChatPage() {
@@ -26,6 +27,12 @@ export default function ChatPage() {
     const nameById = useMemo(() => {
         const map = new Map<string, string>();
         for (const g of guests) map.set(String(g.id ?? ""), g.display_name || "Okänd");
+        return map;
+    }, [guests]);
+
+    const avatarById = useMemo(() => {
+        const map = new Map<string, string | null>();
+        for (const g of guests) map.set(String(g.id ?? ""), getGuestAvatarUrl(g));
         return map;
     }, [guests]);
 
@@ -66,6 +73,18 @@ export default function ChatPage() {
 
     const currentName = userId ? (nameById.get(String(userId)) || "Jag") : "";
 
+    function getLocalIsoNoZ(d: Date): string {
+        const pad = (n: number) => String(n).padStart(2, "0");
+        const year = d.getFullYear();
+        const month = pad(d.getMonth() + 1);
+        const day = pad(d.getDate());
+        const hours = pad(d.getHours());
+        const minutes = pad(d.getMinutes());
+        const seconds = pad(d.getSeconds());
+        // ISO 8601 without timezone "Z" -> interpreted and stored as local time
+        return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+    }
+
     async function send() {
         const content = text.trim();
         if (!content) return;
@@ -75,10 +94,11 @@ export default function ChatPage() {
         }
         try {
             setBusy(true);
+            playMusicSelf();
             const saved = await addMessage({
                 sender: userId,
                 message_body: content,
-                time_sent: new Date().toISOString()
+                time_sent: getLocalIsoNoZ(new Date())
             });
             setMessages(prev => [...prev, saved]);
             setText("");
@@ -88,6 +108,11 @@ export default function ChatPage() {
         } finally {
             setBusy(false);
         }
+    }
+
+    function playMusicSelf() {
+        const audio = new Audio('/meme.m4a');
+        audio.play();
     }
 
     async function onDeleteMessage(m: Message) {
@@ -129,6 +154,18 @@ export default function ChatPage() {
                                 <li key={String(m.id)} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
                                     <div className={`max-w-[80%] ${mine ? "text-right" : "text-left"}`}>
                                         <div className="text-xs opacity-60 mb-1 flex items-center gap-2">
+                                            {(() => {
+                                                const url = avatarById.get(String(m.sender || ""));
+                                                return url ? (
+                                                    <img src={url} alt="avatar"
+                                                         className="w-5 h-5 rounded-full object-cover"/>
+                                                ) : (
+                                                    <div
+                                                        className="w-5 h-5 rounded-full bg-gray-300 flex items-center justify-center text-[10px]">
+                                                        {(who || "?").charAt(0)}
+                                                    </div>
+                                                );
+                                            })()}
                                             <span className="font-medium">{who}</span> • {timeStr}
                                             {mine && (
                                                 <button

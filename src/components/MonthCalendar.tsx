@@ -1,8 +1,9 @@
 "use client";
 import {useEffect, useMemo, useState} from "react";
-import {DateOption, getDateOptions, getRsvps, Rsvp, RsvpOptions, addRsvp, updateRsvp} from "@/lib/supabaseRepo";
+import {DateOption, getDateOptions, getRsvps, Rsvp, RsvpOptions, addRsvp, updateRsvp, getGuests, Guest, getGuestAvatarUrl} from "@/lib/supabaseRepo";
 import {getCookie} from "@/lib/cookies";
 import {USER_COOKIE} from "@/constants/users";
+import SelectedDateAndInfo from "@/components/SelectedDateAndInfo";
 
 export type MonthCalendarProps = {
     initialDate?: Date; // if not provided, set to month of the first date_option
@@ -73,6 +74,8 @@ export default function MonthCalendar({initialDate, dayCellHeight, onMonthChange
     const [selectedYmd, setSelectedYmd] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [myRsvps, setMyRsvps] = useState<Record<string, Rsvp>>({}); // key: date_option_id -> RSVP
+    const [allRsvps, setAllRsvps] = useState<Rsvp[]>([]);
+    const [guests, setGuests] = useState<Guest[]>([]);
 
     // Build month grid
     const monthMeta = useMemo(() => {
@@ -132,26 +135,33 @@ export default function MonthCalendar({initialDate, dayCellHeight, onMonthChange
                 setDateOptions(options);
                 setOptionsByYmd(byYmd);
 
-                // Try to load my RSVPs if cookie contains guest id
+                // Load all RSVPs and guests; also compute my RSVPs if cookie present
                 try {
-                    const guestId = getCookie(USER_COOKIE);
-                    if (guestId) {
-                        const all = await getRsvps();
-                        if (!ignore) {
+                    const [rsvps, gs] = await Promise.all([
+                        getRsvps().catch(() => []),
+                        getGuests().catch(() => []),
+                    ]);
+                    if (!ignore) {
+                        setAllRsvps(rsvps);
+                        setGuests(gs);
+                        const guestId = getCookie(USER_COOKIE);
+                        if (guestId) {
                             const mine: Record<string, Rsvp> = {};
-                            all.filter(r => String(r.guest_id || "") === guestId)
+                            rsvps.filter(r => String(r.guest_id || "") === guestId)
                                 .forEach(r => {
                                     const key = String(r.date_option_id || "");
                                     if (key) mine[key] = r as Rsvp;
                                 });
                             setMyRsvps(mine);
+                        } else {
+                            setMyRsvps({});
                         }
-                    } else {
-                        setMyRsvps({});
                     }
                 } catch (err) {
-                    console.warn("Could not load RSVPs; defaulting to blue highlights", err);
+                    console.warn("Could not load RSVPs/guests; defaulting to blue highlights", err);
                     setMyRsvps({});
+                    setAllRsvps([]);
+                    setGuests([]);
                 }
 
                 // Initial month = month of first option start
@@ -265,6 +275,25 @@ export default function MonthCalendar({initialDate, dayCellHeight, onMonthChange
                 {monthMeta.weeks.flat().map(({date, inMonth}) => {
                     const opts = optionsByYmd[date] || [];
                     const isSelected = !!(selectedOption && opts.some((o) => o.id === selectedOption.id));
+
+                    // Build guest status per day (any YES beats NO)
+                    const optionIds = new Set(opts.map(o => String(o.id || "")));
+                    const perGuest: Record<string, RsvpOptions.YES | RsvpOptions.NO> = {};
+                    for (const r of allRsvps) {
+                        const oid = String(r.date_option_id || "");
+                        const gid = String(r.guest_id || "");
+                        if (!oid || !gid || !optionIds.has(oid) || !r.status) continue;
+                        if (r.status === RsvpOptions.YES) {
+                            perGuest[gid] = RsvpOptions.YES;
+                        } else if (!perGuest[gid] && r.status === RsvpOptions.NO) {
+                            perGuest[gid] = RsvpOptions.NO;
+                        }
+                    }
+                    const items = Object.keys(perGuest).map(gid => {
+                        const g = guests.find(x => String(x.id || "") === gid);
+                        return { guest: g, gid, status: perGuest[gid] } as { guest?: Guest; gid: string; status: RsvpOptions.YES | RsvpOptions.NO };
+                    }).filter(i => !!i.guest);
+
                     return (
                         <div
                             key={date}
@@ -288,67 +317,45 @@ export default function MonthCalendar({initialDate, dayCellHeight, onMonthChange
                             }}
                             title={date}
                         >
-                            <div className="text-xs font-semibold md:flex md:items-center md:justify-between md:w-full md:h-full">
-                                <span>{new Date(date).getDate()}</span>
+                            <div className="text-xs font-semibold md:flex md:flex-col md:items-start md:justify-start md:w-full md:h-full w-full">
+                                <div className="flex items-center justify-between w-full">
+                                    <span>{new Date(date).getDate()}</span>
+                                </div>
+                                {items.length > 0 && (
+                                    <div className="mt-1 flex flex-wrap gap-1">
+                                        {items.map(({guest, gid, status}) => {
+                                            const url = getGuestAvatarUrl(guest);
+                                            const borderClass = status === RsvpOptions.YES ? "border-green-600" : "border-red-600";
+                                            return (
+                                                <div key={`${date}-${gid}`} className={`rounded-full border-2 ${borderClass}`} title={`${guest?.display_name} ${status === RsvpOptions.YES ? "kan" : "kan inte"}`}>
+                                                    {url ? (
+                                                        <img src={url} alt="avatar" className="w-5 h-5 md:w-6 md:h-6 rounded-full object-cover"/>
+                                                    ) : (
+                                                        <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-gray-200 flex items-center justify-center text-[10px]">
+                                                            {(guest?.display_name || "?").charAt(0)}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     );
                 })}
             </div>
 
-            {/* Sidebar overlay and panel when a date option is selected */}
+            {/* Big invite-like overlay when a date is selected */}
             {selectedOption && (
-                <>
-                    <div
-                        className="fixed inset-0 bg-black/40 z-40"
-                        onClick={() => setSelectedOption(null)}
-                        aria-hidden="true"
-                    />
-                    <div className="fixed inset-y-0 right-0 z-50 p-4 pointer-events-none">
-                        <aside
-                            className="pointer-events-auto sticky top-2 max-h-[calc(100dvh-1rem)] w-80 sm:w-96 bg-white text-black shadow-2xl p-4 flex flex-col overflow-y-auto rounded-lg border">
-                            <div className="flex items-center justify-between mb-4">
-                                <div className="text-lg font-bold truncate">{selectedOption.label || "Vald helg"}</div>
-                                <button
-                                    className="rounded-full border px-2 py-1 text-sm"
-                                    onClick={() => setSelectedOption(null)}
-                                    aria-label="Stäng"
-                                >
-                                    ✕
-                                </button>
-                            </div>
-
-                            {/* Optional: show the date range for context */}
-                            {(() => {
-                                const start = ymdFromVal(getStartRaw(selectedOption)) || "";
-                                const end = ymdFromVal(getEndRaw(selectedOption)) || start;
-                                if (!start) return null;
-                                return (
-                                    <div className="text-sm opacity-80 mb-2">
-                                        {start === end ? `Datum: ${start}` : `Datum: ${start} – ${end}`}
-                                    </div>
-                                );
-                            })()}
-
-                            <div className="mt-2 grid grid-cols-1 gap-3">
-                                <button
-                                    className="w-full py-3 rounded-xl bg-green-600 text-white font-bold disabled:opacity-60"
-                                    onClick={() => sendRsvpYes(selectedOption)}
-                                    disabled={rsvpBusy}
-                                >
-                                    Jag kan
-                                </button>
-                                <button
-                                    className="w-full py-3 rounded-xl bg-red-600 text-white font-bold disabled:opacity-60"
-                                    onClick={() => sendRsvpNo(selectedOption)}
-                                    disabled={rsvpBusy}
-                                >
-                                    Jag kan inte
-                                </button>
-                            </div>
-                        </aside>
-                    </div>
-                </>
+                <SelectedDateAndInfo
+                    option={selectedOption}
+                    guests={guests}
+                    rsvps={allRsvps.filter(r => String(r.date_option_id || "") === String(selectedOption.id || ""))}
+                    onClose={() => setSelectedOption(null)}
+                    onYes={() => sendRsvpYes(selectedOption)}
+                    onNo={() => sendRsvpNo(selectedOption)}
+                />
             )}
         </div>
     );
