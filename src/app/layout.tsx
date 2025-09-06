@@ -7,6 +7,7 @@ const geistSans = Geist({
     variable: "--font-geist-sans",
     subsets: ["latin"],
 });
+//init commit comments
 
 const geistMono = Geist_Mono({
     variable: "--font-geist-mono",
@@ -14,8 +15,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+
     title: "Party Invite",
     description: "Pick your name, mark availability, and chat about the party!",
+
 };
 
 export default function RootLayout({
@@ -35,6 +38,7 @@ export default function RootLayout({
                 {children}
             </UserGate>
         </div>
+
         </body>
         </html>
     );
